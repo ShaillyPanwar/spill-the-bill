@@ -4,7 +4,11 @@ import com.spillthebill.group.dto.CreateGroupRequest;
 import com.spillthebill.group.dto.GroupResponse;
 import com.spillthebill.group.service.GroupService;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import com.spillthebill.group.dto.JoinGroupRequest;
+import com.spillthebill.group.dto.JoinGroupResponse;
 
 import java.util.List;
 
@@ -19,17 +23,21 @@ public class GroupController {
     }
 
     @PostMapping
-    public GroupResponse createGroup(@Valid @RequestBody CreateGroupRequest request){
-        return groupService.createGroup(request);
+    public ResponseEntity<GroupResponse> createGroup(@Valid @RequestBody CreateGroupRequest request){
+        return ResponseEntity.ok(groupService.createGroup(request));
     }
 
     @GetMapping("/{createdBy}")
-    public List<GroupResponse> getGroups(@PathVariable Long createdBy){
-        return groupService.getGroups(createdBy);
+    public ResponseEntity<List<GroupResponse>> getGroups(@PathVariable Long createdBy) {
+        return ResponseEntity.ok(groupService.getGroups(createdBy));
     }
 
     @GetMapping("/group/{id}")
-    public GroupResponse getGroup(@PathVariable Long id) {
-        return groupService.getGroup(id);
+    public ResponseEntity<GroupResponse> getGroup(@PathVariable Long id) {
+        return ResponseEntity.ok(groupService.getGroup(id));
+    }
+    @PostMapping("/join")
+    public ResponseEntity<JoinGroupResponse> joinGroup(@RequestBody JoinGroupRequest request) {
+        return ResponseEntity.ok(groupService.joinGroup(request));
     }
 }

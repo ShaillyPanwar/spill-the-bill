@@ -19,4 +19,5 @@ public class GroupResponse {
     private String description;
     private Long createdBy;
     private Timestamp createdAt;
+    private String joinCode;
 }
