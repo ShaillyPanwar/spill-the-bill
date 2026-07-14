@@ -5,6 +5,7 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import CreateGroup from "./pages/CreateGroup";
+import JoinGroup from "./pages/JoinGroup";
 
 function App() {
   return (
@@ -21,6 +22,8 @@ function App() {
         <Route path="/create-group" element={<CreateGroup />} />
 
         <Route path="/group/:id" element={<GroupDetails />} />
+
+        <Route path="/join-group" element={<JoinGroup />} />
 
       </Routes>
 

@@ -40,6 +40,11 @@ function GroupDetails() {
 
     }, [id, navigate]);
 
+    const copyInviteCode = () => {
+    navigator.clipboard.writeText(group.joinCode);
+    alert("Invite code copied!");
+    };
+
     if (!group) {
         return <h2>Loading...</h2>;
     }
@@ -58,8 +63,30 @@ function GroupDetails() {
 
             <hr />
 
-            <h2>Members</h2>
-            <p>No members yet.</p>
+                <h2>Invite Code</h2>
+
+                <div
+                    style={{
+                        border: "2px solid #ccc",
+                        padding: "12px",
+                        width: "fit-content",
+                        fontSize: "24px",
+                        fontWeight: "bold",
+                        letterSpacing: "4px",
+                        marginBottom: "10px"
+                    }}
+                >
+                    {group.joinCode}
+                </div>
+
+                <button onClick={copyInviteCode}>
+                    Copy Invite Code
+                </button>
+
+                <hr />
+
+                <h2>Members</h2>
+                <p>No members yet.</p>
 
             <hr />
 

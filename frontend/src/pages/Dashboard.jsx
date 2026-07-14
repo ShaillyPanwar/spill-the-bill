@@ -61,11 +61,17 @@ function Dashboard() {
             >
                 Create Group
             </button>
+            <button
+                onClick={() => navigate("/join-group")}
+                style={{ cursor: "pointer", marginLeft: "10px" }}
+            >
+                Join Group
+            </button>
 
             <hr />
 
             <h2>My Groups</h2>
-
+            <p>Click a group to view details.</p>
             {groups.length === 0 ? (
                 <p>No groups found.</p>
             ) : (
@@ -74,11 +80,17 @@ function Dashboard() {
                         <li
                             key={group.id}
                             onClick={() => navigate(`/group/${group.id}`)}
-                            style={{ cursor: "pointer" }}
+                            style={{
+                                cursor: "pointer",
+                                border: "1px solid #ccc",
+                                padding: "12px",
+                                marginBottom: "12px",
+                                borderRadius: "8px",
+                                listStyle: "none"
+                            }}
                         >
-                            <strong>{group.name}</strong>
-                            <br />
-                            {group.description}
+                           <h3>{group.name}</h3>
+                           <p>{group.description}</p>      
                         </li>
                     ))}
                 </ul>
