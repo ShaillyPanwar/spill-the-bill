@@ -24,7 +24,7 @@ function GroupDetails() {
             try {
 
                 const response = await api.get(`/groups/group/${id}`);
-
+                console.log(response.data);
                 setGroup(response.data);
 
             } catch (error) {
@@ -86,7 +86,15 @@ function GroupDetails() {
                 <hr />
 
                 <h2>Members</h2>
-                <p>No members yet.</p>
+                {group.members && group.members.length > 0 ? (
+                    <ul>
+                        {group.members.map((member) => (
+                            <li key={member.id}>{member.name}</li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p>No members yet.</p>
+                )}
 
             <hr />
 
