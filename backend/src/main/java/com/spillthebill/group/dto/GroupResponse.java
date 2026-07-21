@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Getter
 @Setter
@@ -20,4 +21,5 @@ public class GroupResponse {
     private Long createdBy;
     private Timestamp createdAt;
     private String joinCode;
+    private List<MemberResponse> members;
 }

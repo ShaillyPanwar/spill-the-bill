@@ -1,10 +1,7 @@
 package com.spillthebill.group.service;
 
 import com.spillthebill.common.JoinCodeGenerator;
-import com.spillthebill.group.dto.CreateGroupRequest;
-import com.spillthebill.group.dto.GroupResponse;
-import com.spillthebill.group.dto.JoinGroupRequest;
-import com.spillthebill.group.dto.JoinGroupResponse;
+import com.spillthebill.group.dto.*;
 import com.spillthebill.group.entity.Group;
 import com.spillthebill.group.entity.GroupMember;
 import com.spillthebill.group.repository.GroupMemberRepository;
@@ -13,6 +10,7 @@ import com.spillthebill.user.entity.User;
 import com.spillthebill.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import com.spillthebill.group.dto.MemberResponse;
 import java.util.List;
 
 @Service
@@ -101,14 +99,21 @@ public class GroupService {
     }
 
     private GroupResponse mapToGroupResponse(Group group) {
-
+        List<MemberResponse> members = groupMemberRepository.findByGroup(group)
+                .stream()
+                .map(groupMember -> new MemberResponse(
+                        groupMember.getUser().getId(),
+                        groupMember.getUser().getName()
+                ))
+                .toList();
         return new GroupResponse(
                 group.getId(),
                 group.getName(),
                 group.getDescription(),
                 group.getCreatedBy(),
                 group.getCreatedAt(),
-                group.getJoinCode()
+                group.getJoinCode(),
+                members
         );
     }
 }
