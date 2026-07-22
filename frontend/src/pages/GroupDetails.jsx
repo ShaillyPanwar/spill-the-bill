@@ -9,6 +9,7 @@ function GroupDetails() {
     const navigate = useNavigate();
 
     const [group, setGroup] = useState(null);
+    const [expenses, setExpenses] = useState([]);
 
     useEffect(() => {
 
@@ -24,8 +25,10 @@ function GroupDetails() {
             try {
 
                 const response = await api.get(`/groups/group/${id}`);
-                console.log(response.data);
                 setGroup(response.data);
+
+                const expenseResponse = await api.get(`/expenses/group/${id}`);
+                setExpenses(expenseResponse.data);
 
             } catch (error) {
 
@@ -99,10 +102,32 @@ function GroupDetails() {
             <hr />
 
             <h2>Expenses</h2>
-            <p>No expenses yet.</p>
-
+            {expenses.length === 0 ? (
+                <p>No expenses yet.</p>
+            ) : (
+                expenses.map((expense) => (
+                    <div
+                        key={expense.id}
+                        style={{
+                            border: "1px solid #ccc",
+                            padding: "10px",
+                            marginBottom: "10px",
+                            borderRadius: "8px"
+                        }}
+                    >
+                        <h3>{expense.description}</h3>
+                        <p>₹ {expense.amount}</p>
+                        <p>Paid by {expense.paidBy}</p>
+                    </div>
+                ))
+            )}
+            <button
+    onClick={() => navigate(`/group/${id}/add-expense`)}
+>
+    + Add Expense
+</button>
         </div>
-
+        
     );
 }
 

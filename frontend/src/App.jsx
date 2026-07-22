@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import CreateGroup from "./pages/CreateGroup";
 import JoinGroup from "./pages/JoinGroup";
+import AddExpense from "./pages/AddExpense";
 
 function App() {
   return (
@@ -13,17 +14,19 @@ function App() {
 
       <Routes>
 
-        <Route path="/" element={<Login />} />
+          <Route path="/" element={<Login />} />
 
-        <Route path="/register" element={<Register />} />
+          <Route path="/register" element={<Register />} />
 
-        <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
 
-        <Route path="/create-group" element={<CreateGroup />} />
+          <Route path="/create-group" element={<CreateGroup />} />
 
-        <Route path="/group/:id" element={<GroupDetails />} />
+          <Route path="/group/:id" element={<GroupDetails />} />
 
-        <Route path="/join-group" element={<JoinGroup />} />
+          <Route path="/group/:id/add-expense" element={<AddExpense />} />
+
+          <Route path="/join-group" element={<JoinGroup />} />
 
       </Routes>
 
