@@ -10,9 +10,11 @@ import java.util.Optional;
 
 public interface GroupMemberRepository extends JpaRepository<GroupMember, Long> {
 
-    List<GroupMember> findByGroup(Group group);
+    List<GroupMember> findByGroup(Group group);  //returns all members of a particular group
 
-    boolean existsByGroupAndUser(Group group, User user);
+    boolean existsByGroupAndUser(Group group, User user); //checks if the user trying to join is already a member
 
-    Optional<GroupMember> findByGroupAndUser(Group group, User user);
+    // Optional<GroupMember> findByGroupAndUser(Group group, User user);   //will be used later after mvp
+
+    List<GroupMember> findByUser(User user); // returns every group the user belongs to
 }

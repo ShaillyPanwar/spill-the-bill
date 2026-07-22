@@ -82,11 +82,13 @@ public class GroupService {
         return new JoinGroupResponse("Joined group successfully");
     }
 
-    public List<GroupResponse> getGroups(Long createdBy) {
+    public List<GroupResponse> getGroups(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return groupRepository.findByCreatedBy(createdBy)
+        return groupMemberRepository.findByUser(user)
                 .stream()
-                .map(this::mapToGroupResponse)
+                .map(groupMember -> mapToGroupResponse(groupMember.getGroup()))
                 .toList();
     }
 
