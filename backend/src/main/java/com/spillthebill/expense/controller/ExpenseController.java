@@ -1,6 +1,7 @@
 package com.spillthebill.expense.controller;
 
 import com.spillthebill.expense.dto.AddExpenseRequest;
+import com.spillthebill.expense.dto.BalanceResponse;
 import com.spillthebill.expense.dto.ExpenseResponse;
 import com.spillthebill.expense.service.ExpenseService;
 import jakarta.validation.Valid;
@@ -30,5 +31,14 @@ public class ExpenseController {
             @PathVariable Long groupId) {
 
         return ResponseEntity.ok(expenseService.getExpenses(groupId));
+    }
+
+    @GetMapping("/group/{groupId}/balances")
+    public ResponseEntity<List<BalanceResponse>> getBalances(
+            @PathVariable Long groupId) {
+
+        return ResponseEntity.ok(
+                expenseService.calculateBalances(groupId)
+        );
     }
 }

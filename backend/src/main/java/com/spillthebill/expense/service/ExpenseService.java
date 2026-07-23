@@ -1,6 +1,7 @@
 package com.spillthebill.expense.service;
 
 import com.spillthebill.expense.dto.AddExpenseRequest;
+import com.spillthebill.expense.dto.BalanceResponse;
 import com.spillthebill.expense.dto.ExpenseResponse;
 import com.spillthebill.expense.entity.Expense;
 import com.spillthebill.expense.entity.ExpenseSplit;
@@ -12,8 +13,12 @@ import com.spillthebill.group.repository.GroupMemberRepository;
 import com.spillthebill.group.repository.GroupRepository;
 import com.spillthebill.user.entity.User;
 import com.spillthebill.user.repository.UserRepository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -39,12 +44,27 @@ public class ExpenseService {
         this.groupMemberRepository = groupMemberRepository;
     }
 
-    public ExpenseResponse addExpense(AddExpenseRequest request){
+    @Transactional
+    public ExpenseResponse addExpense(AddExpenseRequest request) {
+
         Group group = groupRepository.findById(request.getGroupId())
                 .orElseThrow(() -> new RuntimeException("Group not found"));
 
         User user = userRepository.findById(request.getPaidBy())
                 .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<GroupMember> members = groupMemberRepository.findByGroup(group);
+
+        if (members.isEmpty()) {
+            throw new RuntimeException("Group has no members");
+        }
+
+        boolean isMember = members.stream()
+                .anyMatch(member -> member.getUser().getId().equals(user.getId()));
+
+        if (!isMember) {
+            throw new RuntimeException("Paid by user is not a member of this group");
+        }
 
         Expense expense = new Expense();
         expense.setDescription(request.getDescription());
@@ -53,13 +73,8 @@ public class ExpenseService {
         expense.setPaidBy(user);
 
         Expense savedExpense = expenseRepository.save(expense);
-        List<GroupMember> members = groupMemberRepository.findByGroup(group);
 
-        if (members.isEmpty()) {
-            throw new RuntimeException("Group has no members");
-        }
-
-        Double splitAmount = savedExpense.getAmount() / members.size();
+        double splitAmount = savedExpense.getAmount() / members.size();
 
         for (GroupMember member : members) {
             ExpenseSplit split = new ExpenseSplit();
@@ -83,7 +98,7 @@ public class ExpenseService {
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new RuntimeException("Group not found"));
 
-        List<Expense> expenses = expenseRepository.findByGroup(group);
+        List<Expense> expenses = expenseRepository.findByGroupOrderByCreatedAtDesc(group);
 
         return expenses.stream()
                 .map(expense -> new ExpenseResponse(
@@ -94,6 +109,46 @@ public class ExpenseService {
                         expense.getCreatedAt()
                 ))
                 .toList();
+    }
+
+    public List<BalanceResponse> calculateBalances(Long groupId) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Group not found"));
+        List<Expense> expenses = expenseRepository.findByGroupOrderByCreatedAtDesc(group);
+        Map<Long, Double> balances = new HashMap<>();
+        for (Expense expense : expenses) {
+            // Add full amount to the payer
+            Long payerId = expense.getPaidBy().getId();
+            balances.put(
+                    payerId,
+                    balances.getOrDefault(payerId, 0.0) + expense.getAmount()
+            );
+            // Subtract each member's share
+            List<ExpenseSplit> splits = expenseSplitRepository.findByExpense(expense);
+            for (ExpenseSplit split : splits) {
+                Long userId = split.getUser().getId();
+
+                balances.put(
+                        userId,
+                        balances.getOrDefault(userId, 0.0) - split.getAmountOwed()
+                );
+            }
+        }
+        List<BalanceResponse> response = new ArrayList<>();
+
+        List<GroupMember> members = groupMemberRepository.findByGroup(group);
+
+        for (GroupMember member : members) {
+
+            response.add(
+                    new BalanceResponse(
+                            member.getUser().getId(),
+                            member.getUser().getName(),
+                            balances.getOrDefault(member.getUser().getId(), 0.0)
+                    )
+            );
+        }
+        return response;
     }
 
 
