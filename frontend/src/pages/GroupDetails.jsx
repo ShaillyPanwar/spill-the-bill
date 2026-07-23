@@ -10,6 +10,7 @@ function GroupDetails() {
 
     const [group, setGroup] = useState(null);
     const [expenses, setExpenses] = useState([]);
+    const [balances, setBalances] = useState([]);
 
     useEffect(() => {
 
@@ -29,6 +30,9 @@ function GroupDetails() {
 
                 const expenseResponse = await api.get(`/expenses/group/${id}`);
                 setExpenses(expenseResponse.data);
+
+                const balanceResponse = await api.get(`/expenses/group/${id}/balances`);
+                setBalances(balanceResponse.data);
 
             } catch (error) {
 
@@ -100,6 +104,38 @@ function GroupDetails() {
                 )}
 
             <hr />
+            <h2>Balances</h2>
+                {balances.length === 0 ? (
+                    <p>No balances yet.</p>
+                ) : (
+                    balances.map((balance) => (
+                        <div
+                            key={balance.userId}
+                            style={{
+                                border: "1px solid #ccc",
+                                padding: "10px",
+                                marginBottom: "10px",
+                                borderRadius: "8px"
+                            }}
+                        >
+                            <h3>{balance.userName}</h3>
+
+                            {balance.balance > 0 ? (
+                                <p style={{ color: "green" }}>
+                                    Gets back ₹{balance.balance.toFixed(2)}
+                                </p>
+                            ) : balance.balance < 0 ? (
+                                <p style={{ color: "red" }}>
+                                    Owes ₹{Math.abs(balance.balance).toFixed(2)}
+                                </p>
+                            ) : (
+                                <p style={{ color: "gray" }}>
+                                    Settled up
+                                </p>
+                            )}
+                        </div>
+                    ))
+                )}
 
             <h2>Expenses</h2>
             {expenses.length === 0 ? (
@@ -115,12 +151,18 @@ function GroupDetails() {
                             borderRadius: "8px"
                         }}
                     >
+                        <hr />
                         <h3>{expense.description}</h3>
                         <p>₹ {expense.amount}</p>
                         <p>Paid by {expense.paidBy}</p>
+                        <p>
+                            {new Date(expense.createdAt).toLocaleDateString()}{","}
+                            {new Date(expense.createdAt).toLocaleTimeString()}
+                        </p>
                     </div>
                 ))
             )}
+                
             <button
     onClick={() => navigate(`/group/${id}/add-expense`)}
 >

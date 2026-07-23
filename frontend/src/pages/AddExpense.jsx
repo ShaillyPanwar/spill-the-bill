@@ -102,7 +102,7 @@ function AddExpense() {
 
                 <br /><br />
 
-                <button type="submit">
+                <button type="submit"  onClick={() => navigate(`/groups/${groupId}`)}>
                     Add Expense
                 </button>
 
