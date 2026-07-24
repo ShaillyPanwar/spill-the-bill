@@ -104,6 +104,12 @@ function GroupDetails() {
                 )}
 
             <hr />
+
+            <button
+                onClick={() => navigate(`/group/${id}/add-expense`)}
+            >
+                + Add Expense
+            </button>
             <h2>Balances</h2>
                 {balances.length === 0 ? (
                     <p>No balances yet.</p>
@@ -137,6 +143,13 @@ function GroupDetails() {
                     ))
                 )}
 
+                <button
+                    className="btn btn-success me-2"
+                    onClick={() => navigate(`/group/${id}/settlements`)}
+                >
+                    View Settlements
+                </button>
+
             <h2>Expenses</h2>
             {expenses.length === 0 ? (
                 <p>No expenses yet.</p>
@@ -163,11 +176,6 @@ function GroupDetails() {
                 ))
             )}
                 
-            <button
-    onClick={() => navigate(`/group/${id}/add-expense`)}
->
-    + Add Expense
-</button>
         </div>
         
     );

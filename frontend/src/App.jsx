@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import CreateGroup from "./pages/CreateGroup";
 import JoinGroup from "./pages/JoinGroup";
 import AddExpense from "./pages/AddExpense";
+import Settlement from "./pages/Settlement";
 
 function App() {
   return (
@@ -27,6 +28,8 @@ function App() {
           <Route path="/group/:id/add-expense" element={<AddExpense />} />
 
           <Route path="/join-group" element={<JoinGroup />} />
+
+          <Route path="/group/:id/settlements" element={<Settlement />} />
 
       </Routes>
 
