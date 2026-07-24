@@ -3,7 +3,9 @@ package com.spillthebill.expense.controller;
 import com.spillthebill.expense.dto.AddExpenseRequest;
 import com.spillthebill.expense.dto.BalanceResponse;
 import com.spillthebill.expense.dto.ExpenseResponse;
+import com.spillthebill.expense.dto.SettlementDTO;
 import com.spillthebill.expense.service.ExpenseService;
+import com.spillthebill.expense.service.SettlementService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +16,12 @@ import java.util.List;
 @RequestMapping("/api/expenses")
 public class ExpenseController {
     private final ExpenseService expenseService;
+    private final SettlementService settlementService;
 
-    public ExpenseController(ExpenseService expenseService) {
+    public ExpenseController(ExpenseService expenseService,
+                             SettlementService settlementService) {
         this.expenseService = expenseService;
+        this.settlementService = settlementService;
     }
 
     @PostMapping
@@ -39,6 +44,14 @@ public class ExpenseController {
 
         return ResponseEntity.ok(
                 expenseService.calculateBalances(groupId)
+        );
+    }
+
+    @GetMapping("/group/{groupId}/settlements")
+    public ResponseEntity<List<SettlementDTO>> getSettlements(@PathVariable Long groupId) {
+
+        return ResponseEntity.ok(
+                settlementService.calculateSettlements(groupId)
         );
     }
 }

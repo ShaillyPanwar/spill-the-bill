@@ -54,16 +54,24 @@ public class ExpenseService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         List<GroupMember> members = groupMemberRepository.findByGroup(group);
-
         if (members.isEmpty()) {
             throw new RuntimeException("Group has no members");
         }
-
         boolean isMember = members.stream()
                 .anyMatch(member -> member.getUser().getId().equals(user.getId()));
-
         if (!isMember) {
             throw new RuntimeException("Paid by user is not a member of this group");
+        }
+
+        if (request.getParticipantIds() == null || request.getParticipantIds().isEmpty()) {
+            throw new RuntimeException("Please select at least one participant");
+        }
+        for (Long participantId : request.getParticipantIds()) {
+            boolean participantExists = members.stream()
+                    .anyMatch(member -> member.getUser().getId().equals(participantId));
+            if (!participantExists) {
+                throw new RuntimeException("Participant is not a member of this group");
+            }
         }
 
         Expense expense = new Expense();
@@ -74,14 +82,15 @@ public class ExpenseService {
 
         Expense savedExpense = expenseRepository.save(expense);
 
-        double splitAmount = savedExpense.getAmount() / members.size();
+        double splitAmount = savedExpense.getAmount() / request.getParticipantIds().size();
 
-        for (GroupMember member : members) {
+        for (Long participantId : request.getParticipantIds()) {
+            User participant = userRepository.findById(participantId)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
             ExpenseSplit split = new ExpenseSplit();
             split.setExpense(savedExpense);
-            split.setUser(member.getUser());
+            split.setUser(participant);
             split.setAmountOwed(splitAmount);
-
             expenseSplitRepository.save(split);
         }
 
