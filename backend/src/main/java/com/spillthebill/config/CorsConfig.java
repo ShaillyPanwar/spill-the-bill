@@ -18,7 +18,8 @@ public class CorsConfig {
 
         config.setAllowedOrigins(List.of(
                 "http://localhost:5173",
-                "http://localhost:5174"
+                "http://localhost:5174",
+                "https://spill-the-bill-beta.vercel.app"
         ));        config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         config.setAllowCredentials(true);
